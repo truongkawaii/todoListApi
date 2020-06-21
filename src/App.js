@@ -58,21 +58,20 @@ function App() {
     newList.push(item);
     try {
       async function postApi(){
-        const result = await fetch(
-          'https://5ee88e35ffee0c0016a12f4d.mockapi.io/api/v1/employees/demo',
-          {
-            method: 'POST',
-            headers: {
-              'Accept': 'application/json',
-              'Content-Type': 'application/json',
-          },
+        const requestOption ={
+          method: 'POST',
+          headers: {
+            'Accept': 'application/json',
+            'Content-Type': 'application/json',
+           },
           body: JSON.stringify(item),
-        } 
-        );
-    
-        setData({
+           } 
+         await setData({
           listdata:newList
-        });
+        },fetch(
+          'https://5ee88e35ffee0c0016a12f4d.mockapi.io/api/v1/employees/demo',
+          requestOption
+        ));
       } 
       postApi();
     } catch (error) {
@@ -125,24 +124,21 @@ function App() {
   const HandleDelete=(itemId)=>{
     try {
       async function deleteApi(){
-        const result = await fetch(
-          `https://5ee88e35ffee0c0016a12f4d.mockapi.io/api/v1/employees/demo/${itemId}`,
-          {
-            method: 'DELETE',
-            headers: {
-              'Accept': 'application/json',
-              'Content-Type': 'application/json',
-          }
-        } 
-        );
-       const newList= data.listdata.filter(x=>{
+        const requestOption =  {
+          method: 'DELETE',
+          headers: {
+            'Accept': 'application/json',
+            'Content-Type': 'application/json',
+             }
+            }
+        const newList= data.listdata.filter(x=>{
           return x.id!=itemId;
         })
-        setData({
+        await setData({
           listdata:newList
-        });
+        },fetch(`https://5ee88e35ffee0c0016a12f4d.mockapi.io/api/v1/employees/demo/${itemId}`,requestOption));
       } 
-      deleteApi();
+      deleteApi()
     } catch (error) {
       console.log(error);
       
@@ -169,31 +165,28 @@ function App() {
     try {
       async function putApi(){
         console.log(item,'itemEDIT');
-        // Edit data api 
-         fetch(
-          `https://5ee88e35ffee0c0016a12f4d.mockapi.io/api/v1/employees/demo/${item.id}`,
-          {
-            method: 'PUT',
-            headers: {
-              'Accept': 'application/json',
-              'Content-Type': 'application/json',
-          },
-          body:JSON.stringify({avatar:item.avatar,name:item.name,createdAt:item.createdAt})
-        } 
-        ).then(res => res.json()).then(resolve => {
+        const requestOption={
+          method: 'PUT',
+          headers: {
+            'Accept': 'application/json',
+            'Content-Type': 'application/json',
+              },
+           body:JSON.stringify({avatar:item.avatar,name:item.name,createdAt:item.createdAt})
+          } 
+
           const List =[...data.listdata];
           const newList= List.map(itemm => {
-            if(itemm.id===resolve.id){
-               return {...resolve}     
+            if(itemm.id===item.id){
+               return {...item}     
             }
             return itemm;
           })
          setData({
           listdata:newList
-         })
-          
-        });
-
+         },fetch(
+          `https://5ee88e35ffee0c0016a12f4d.mockapi.io/api/v1/employees/demo/${item.id}`,
+          requestOption
+        ))
        setItem({
           id:"",
           name:"",
